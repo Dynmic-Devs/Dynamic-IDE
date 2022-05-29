@@ -1,16 +1,19 @@
+var editor = ace.edit("editor");
+var output = $("#output-frame")[0];
+
 language_list = [
-    'c_cpp','csharp','csound_score','css',
-    'dart','django','dockerfile','gitignore',
-    'golang','html_elixir','html','html_ruby',
-    'java','javascript','json5','jsoniq',
-    'json','jsp','jsx','julia','kotlin',
-    'latex','makefile','markdown','mysql',
-    'nginx','perl','pgsql','php','php_laravel_blade',
-    'plain_text','powershell','properties',
-    'python','r','ruby','rust','sass','scss',
-    'sh','sql','sqlserver','svg','swift',
-    'text','toml','typescript','vbscript',
-    'xml','yaml',
+    'c_cpp', 'csharp', 'csound_score', 'css',
+    'dart', 'django', 'dockerfile', 'gitignore',
+    'golang', 'html_elixir', 'html', 'html_ruby',
+    'java', 'javascript', 'json5', 'jsoniq',
+    'json', 'jsp', 'jsx', 'julia', 'kotlin',
+    'latex', 'makefile', 'markdown', 'mysql',
+    'nginx', 'perl', 'pgsql', 'php', 'php_laravel_blade',
+    'plain_text', 'powershell', 'properties',
+    'python', 'r', 'ruby', 'rust', 'sass', 'scss',
+    'sh', 'sql', 'sqlserver', 'svg', 'swift',
+    'text', 'toml', 'typescript', 'vbscript',
+    'xml', 'yaml',
 ]
 
 boilerplate_html = `\
@@ -32,15 +35,14 @@ boilerplate_html = `\
 </html>\
 `
 
-boilerplate_js = `\
+boilerplate_javascript = `\
 var mytext = "This is Javascript";
 
 function print_this(args){
     console.log(args);
 }
 
-print_this(mytext);
-\
+print_this(mytext);\
 `
 
 boilerplate_python = `\
@@ -63,7 +65,6 @@ Class Main{
 }\
 `
 
-
 boilerplate_c_cpp = `\
 #include <iostream>
 #include <string>
@@ -81,10 +82,68 @@ int main()
 }\
 `
 
-boilerplate = {
-    'html' : boilerplate_html,
-    'js' : boilerplate_js,
-    'python' : boilerplate_python,
-    'java' : boilerplate_java,
-    'c_cpp' : boilerplate_c_cpp
+boilerplate_code = {
+    'html'      : boilerplate_html,
+    'javascript': boilerplate_javascript,
+    'python'    : boilerplate_python,
+    'java'      : boilerplate_java,
+    'c_cpp'     : boilerplate_c_cpp
+}
+
+class Language{
+    constructor(_name, _boilerplate, _runner_function, _props={}){
+        this.name        = _name;
+        this.boilerplate = _boilerplate;
+        this.run         = _runner_function;
+        this._props      = _props;
+    }
+
+    initialize(){
+        editor.session.setMode('ace/mode/'+this.name);
+        editor.session.setValue(boilerplate_code[this.name]);
+    }
+}
+
+html_language = new Language(
+    'html',
+    boilerplate_html,
+    () => {
+        return editor.getValue();
+    }
+);
+javascript_language = new Language(
+    'javascript',
+    boilerplate_javascript,
+    () => {
+        return editor.getValue();
+    }
+);
+python_language = new Language(
+    'python',
+    boilerplate_python,
+    () => {
+        return editor.getValue();
+    }
+);
+java_language = new Language(
+    'java',
+    boilerplate_java,
+    () => {
+        return editor.getValue();
+    }
+);
+c_cpp_language = new Language(
+    'c_cpp',
+    boilerplate_c_cpp,
+    () => {
+        return editor.getValue();
+    }
+)
+
+languages = {
+    'html'       : html_language,
+    'javascript' : javascript_language,
+    'python'     : python_language,
+    'java'       : java_language,
+    'c_cpp'      : c_cpp_language
 }
